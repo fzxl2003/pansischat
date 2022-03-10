@@ -1,0 +1,207 @@
+
+
+编译方法:
+pyinstaller -F -w -i ico.ico main.py -p C:\Users\Pansis\PycharmProjects\pansischat\venv\Lib\site-packages   客户端编译
+pyinstaller -F  服务器端.py -p C:\Users\Pansis\PycharmProjects\pansischat\venv\Lib\site-packages   服务器端编译
+
+
+
+
+当前问题
+最小化按钮
+
+
+
+未来可加功能
+头像
+多背景支持以及自主添加背景以及自主主题色
+
+新消息提醒***
+单条聊天记录删除
+上传文件的文件名要求无（）
+非当前好友来消息停止刷新
+
+服务器ip地址可调整  (解决)
+服务器连接失败后的重新连接(解决)
+第一次登陆后无法显示消息(解决)
+账号错误服务器崩溃(解决)
+密码格式要求（没有&*=的特殊符号）(解决)
+聊天记录特殊符号（无￥&）(解决)
+指令集
+0000  客→服 检测网络连通tcp
+0001  客→服 发送登录请求 0001userid&code
+0002  回执登陆成功 0002+个人秘钥+*+usernicheng+*+useruiid+*+0006消息(个人秘钥加密)(消息格式为服务器暂存格式)
+0003  回执无此用户 0003
+0004  密码错误 0004
+0006  回执新消息 0006消息(个人秘钥加密)(消息格式为服务器暂存格式)
+0011 客→服 发送消息 0011接收人id&发送人id&时间&内容
+
+0013 客→服 请求对方昵称  0013friendid
+0014  回执对方昵称 0014对方昵称
+
+0017 客→服 更改昵称、密码、ui    0017userid昵称+*+uiid+*+登录密码
+                                                           未更改的用&表示
+0020  客→服 请求下载文件       0020+<文件名>                                                                                                                        （明文传输）
+0023  服→客  回执下载端口     （明文传输）
+0021 服→客  回执上传的文件名称  0021+<端口号>+<实际文件名>   端口号用来识别发至哪个客户端   （明文传输）
+0022 客→服 回执上传文件    0022+<文件名>      （明文传输）
+0024  互传   公钥    （明文传输）
+0025 客→服  断线重连后的登录
+
+
+
+
+
+0005 客→服 请求新消息 0005userid（弃用）
+0009 客→服 请求昵称 0009userid（弃用）
+0010  回执昵称 0010usernicheng（弃用）
+0012  回执消息送达者不存在(废弃) 
+0015 客→服 请求uiid 0015userid（弃用）
+0016  返回uiid 0016uiid（弃用）
+0018 客→服 更改密码 0018userid登录密码(登录秘钥加密)（弃用）
+0019 客→服 更改ui 0019userid uiid  E（弃用）
+0023 （弃用）
+登录密码秘钥:     b'w2V8gAUFER-9uq6lKG7AfpYI6AcINEs7Ipm4KyQj2AI='   （已被非对称加密架空）
+
+
+
+
+
+
+函数名（长时间未更新）
+tcpsitiontest() 检查tcp网络连接
+liaotiansend(event) 聊天输入框回车事件(废弃)
+encrypt1(data,cipher_key) 加密
+decrypt1(data, cipher_key) 解密
+codeshow1():            #控制密码框显示密码
+newsend(event): 发送新消息(聊天输入框回车事件)
+mousemove(event): 好友列表滚动   检测鼠标滚轮         
+friendlistmovedown(): 好友列表滚动   刷新列表标签的内容  
+friendlistmoveup(): 好友列表滚动   刷新列表标签的内容
+friendlistmove():  好友列表滚动   移动列表标签
+friendlist****click(event):  1-8 好友列表点击事件
+friendlistclick() 好友列表点击事件
+friendlistclick2() 好友列表点击事件
+shezhi(event): 启动设置界面(设置标签点击事件)（多线程）
+shezhiwindow(): 设置界面控件创建及展示及事件绑定
+sui(): 设置界面ui设计
+swindowoff2(event): 设置界面关闭按钮ui设计
+swindowoff2(event): 设置界面关闭按钮ui设计
+swindowoff1(event): 设置界面关闭按钮关闭事件
+swindowright2(event):设置界面右翻页ui设计
+swindowright3(event):设置界面右翻页ui设计
+swindowright1(event):设置界面右翻页翻页事件
+swindowleft2(event):设置界面左翻页ui设计
+swindowleft3(event):设置界面左翻页ui设计
+swindowleft1(event):设置界面左翻页翻页事件
+baocun1():设置界面保存事件
+suserdelete(event):设置界面账户删除事件
+getnew():  #请求新消息
+dengluok():          #登录成功事件
+userui(uiid): ui设计
+userexit1(event): 注销事件
+newchatentryfocusin(event):发起新聊天输入框-获得焦点事件
+newchatentryfocusout(event):发起新聊天输入框-失去焦点事件
+newchat(event):发送消息
+friendline1():登陆成功后准备好友列表
+friendlistcalm():好友列表不满8个时的静态展示
+addnicheng(nicheng1):为新用户添加昵称 #修改本地昵称
+nouser(): ##登录无此用户事件
+codeerror(): ##登录密码错误事件
+tcp(senddata):  #数据发送
+tcpreceive():数据接收并处理（多线程）
+denglu1():   登录按钮事件
+userinputdelte(event) codeinputdelte(event)::登录框-获得焦点事件
+userinputadd(event) codeinputadd(event)::登录框-失去焦点事件
+windowoff1(event):窗口关闭
+windowmin1(event): 窗口最小化
+windowoff2(event):
+windowmin2(event):
+windowoff3(event):
+windowmin3(event):最小化最大化ui设计
+windowmove(event) windowclick(event)::窗口移动事件
+
+
+变量名（不含控件）（长时间未更新）
+tcps  网络tcp（socket）
+ip 服务器端ip（string）
+tcpsituation1 网络状况变量（int）
+logcode 登录密码秘钥（b'字符）
+indexbgimage   = tk.PhotoImage(file="组件/ui/1/登录背景1.png")
+offimage0          =tk.PhotoImage(file="组件/ui/1/关闭0.png")
+minimage0        =tk.PhotoImage(file="组件/ui/1/最小化0.png")
+offimage1          =tk.PhotoImage(file="组件/ui/1/关闭1.png")
+minimage1        =tk.PhotoImage(file="组件/ui/1/最小化1.png")
+uiid  用户ui序号（string）
+uimain 用户ui主题号（string）
+datatime 事件（年月日格式）（string）
+friendlistmainy 好友列表最高纵坐标（int）
+friendlistmain 好友列表当前最高的控件标签号（int）
+friendlistmainsum 好友列表当前最高的序列号（int）
+friendlist****id 1-8 好友列表的好友id号（string）
+friendline 好友列表id组（列表str）
+nowfriendid 当前聊天的好友id号（string）
+usernicheng 用户昵称
+friendnicheng 当前好友昵称
+nowfriendrow 当前好友在表格中的行数
+t1 多线程控制函数shezhiwindow
+getnewt3 多线程控制函数getnew
+ws 用户的表格薄
+wb 用户的表格
+
+设置ui图像
+simagemaximage = tk.PhotoImage(file="组件/ui/" + uimain + "/注册背景" + uiid + ".png")
+simageminimage = tk.PhotoImage(file="组件/ui/" + uimain + "/展示背景" + uiid + ".png")
+soffimage0 = tk.PhotoImage(file="组件/ui/" + uimain + "/返回0.png")
+soffimage1 = tk.PhotoImage(file="组件/ui/" + uimain + "/返回1.png")
+sleftimage0 = tk.PhotoImage(file="组件/ui/" + uimain + "/左翻页0.png")
+sleftimage1 = tk.PhotoImage(file="组件/ui/" + uimain + "/左翻页1.png")
+srightimage0 = tk.PhotoImage(file="组件/ui/" + uimain + "/右翻页0.png")
+srightimage1 = tk.PhotoImage(file="组件/ui/" + uimain + "/右翻页1.png")
+suiid 当前设置uiid
+newcode 设置的新密码
+
+控件名（长时间未更新）
+window 窗口
+indexbgi=tk.Label(window）窗口背景
+userinput=tk.Entry(window）  登录框输入用户名
+codeinput=tk.Entry(window） 登录框输入密码
+tcpsituation=tk.Label(window） 网络状况显示控件
+result=tk.Text(window） 聊天记录显示框
+windowoff=tk.Label(window）窗口关闭按钮
+windowmin=tk.Label(window）窗口最小化按钮
+setput=tk.Text(window）聊天输入框
+newchatlable=tk.Label(window） 发起新聊天标签
+newchatentry=tk.Entry(window） 发起新聊天输入框
+
+window2 设置窗口
+simagemax = tk.Label(window2)
+slabel1 = tk.Label(window2, text='Pansis账户ID')
+slabel2 = tk.Label(window2, text=userid)
+slabel3 = tk.Label(window2, text='账户删除')
+slabel4 = tk.Label(window2, text='密码')
+slabel5 = tk.Label(window2, text='昵称')
+slabel6 = tk.Label(window2, text='主题')
+slabel7 = tk.Label(window2, text='注意所有聊天记录将全部删除且无法找回',fg='red')
+scodeentry = tk.Entry(window2) 密码修改输入框
+snichengentry = tk.Entry(window2）昵称修改输入框
+sleft = tk.Label(window2)  背景更换左按钮
+sright = tk.Label(window2)  背景更换右按钮
+soff = tk.Label(window2) 设置窗口关闭
+simagemin = tk.Label(window2) 设置背景预览
+sbaocun = tk.Button(window2）设置保存按钮
+
+
+模块
+tcp网络模块
+
+
+
+
+
+
+
+
+
+
+
