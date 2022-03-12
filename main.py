@@ -112,7 +112,7 @@ def tcpsitiontest():
     while True:
 
 
-   #  print(ip)
+
      global tcpsituation1
   #   print('now1'+str(tcpsituation1))
      #print(ip)
