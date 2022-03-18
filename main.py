@@ -2263,7 +2263,7 @@ def windowmin1(event):    ###
 #    window.overrideredirect(True)
  #   time.sleep(0.1)
 #def windowout(event):
- #   window.overrideredirect(False)
+ #   window.overrideredirect(False
 def windowoff2(event):
     windowoff.config(image=offimage1)
 def windowmin2(event):
