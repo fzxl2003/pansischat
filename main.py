@@ -1940,7 +1940,6 @@ def tcpreceive():
            friendnicheng=receivedata[4:]
            friendlistclick2()
      if 指令 == '0016':
-
            uiid1=receivedata[4:]
            uiid1=str(uiid1)
            if uiid1[0]=='b':
@@ -2101,9 +2100,7 @@ def massage(receivedata):
                                         while i <= len(data) - 1:
                                             if data[i] == '&':
                                                 dataid = data[i + 1:i + 6]
-
                                                 datatime = data[:i]
-
                                                 data = data[i + 6:]
                                                 print(data)
 
@@ -2157,14 +2154,6 @@ def massage(receivedata):
                                             i = i + 1
                                         filelistnonum = filelistnonum + 1
                                         result.see(tk.END)
-
-
-
-
-
-
-
-
                                #     if nowfriendid != '':
                               #          friendlistclick()
                                     print(time.time() - m)
