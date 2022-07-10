@@ -3,6 +3,7 @@
 # -*- coding: UTF-8 -*-
 import hashlib
 import os
+import random
 import sys
 import threading
 import tkinter as tk
@@ -49,15 +50,18 @@ filelistnonum=0
 indexbgi=tk.Label(window,image=indexbgimage)
 indexbgi.place(x=-5,y=-5)
 global usernicheng
-global datatime
+
 userinput=tk.Entry(window,bg='#555555',relief=FLAT,width=25,text='Pansis账户',fg='#8E8E84')
 codeinput=tk.Entry(window,bg='#555555',relief=FLAT,width=25,show='',fg='#8E8E84')
 tcpsituation=tk.Label(window,text='正在连接服务器',fg='#8E8E84',bg='black')
 denglusituation=tk.Label(window,text='',fg='#FF0000',bg='black')
 result=tk.Text(window,width=60,height=30,bg='#2B2B2B',fg='#FFFFFF',bd=0)
+sendenter=tk.Label(window,width=7,height=1,bg='#535353',bd=0,text='发送')
+p2penter = tk.Label(window, width=7, height=1, bg='#535353', bd=0,text='P2P')
+p2plabel= tk.Label(window, width=19, height=1, bg='#535353', bd=0,text='当前状态：服务器中转')
 windowoff=tk.Label(window,image=offimage0,bg='black')
 windowmin=tk.Label(window,image=minimage0,bg='black')
-setput=tk.Text(window,width=60,height=5,bg='#535353',bd=0)
+setput=tk.Text(window,width=60,height=4,bg='#535353',bd=0)
 window.attributes("-alpha", 0.85)
 userinput.place(x=300,y=50)
 codeinput.place(x=300,y=85)
@@ -66,7 +70,7 @@ windowoff.place(x=465,y=2)
 windowmin.place(x=435,y=2)
 datatime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 nowfile=''
-
+p2psituation=0
 
 
 
@@ -168,8 +172,9 @@ def codeshow1():            #控制密码框显示
     else:codeinput.config(show='')
     return
 def newsend(event):
-    global tcpsituation1
-    if friendlistclick_on==1:
+  global tcpsituation1,p2psituation
+  if friendlistclick_on==1:
+    if (p2psituation!=1 and p2psituation!=2and p2psituation!=3and p2psituation!=4):
      global filelistnonum
      datatime=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
      data=setput.get('1.0', 'end')
@@ -177,20 +182,20 @@ def newsend(event):
      if len(data)>=1000:
          result.insert('end', '消息过长\n')
          result.see(tk.END)
-         result.config(state='disable')
+         result.config(state='disabled')
          return
      i=0
      while i<=len(data)-1:
          if data[i]=='￥' or data[i]=='&' or data[i]=='*' or data[i]=='=' :
              result.insert('end', '不能含有￥&*=的特殊符号\n')
              result.see(tk.END)
-             result.config(state='disable')
+             result.config(state='disabled')
              return
 
          i=i+1
      result.insert('end', usernicheng + '(我)   ' + datatime + '\n' + data + '\n')
      filelistnonum=filelistnonum+1
-     result.config(state='disable')
+     result.config(state='disabled')
      data2=datatime+'&'+data
      data2=encrypt1(data2,code)
      data1='0011'+nowfriendid+'&'+userid+'&'+str(data2)
@@ -220,14 +225,52 @@ def newsend(event):
                  cell.value=data
                  wb.save(userid+'.xlsx')
                  break
-
-
          setput.focus_force()
          win32api.keybd_event(38, 0, 0, 0)
          win32api.keybd_event(38, 0, win32con.KEYEVENTF_KEYUP, 0)
          result.see(tk.END)
-         result.config(state='disable')
-     return
+         result.config(state='disabled')
+    else:
+      datatime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+      data = setput.get('1.0', 'end')
+      result.config(state='normal')
+      if len(data) >= 1000:
+          result.insert('end', '消息过长\n')
+          result.see(tk.END)
+          result.config(state='disabled')
+          return
+      i = 0
+      while i <= len(data) - 1:
+          if data[i] == '￥' or data[i] == '&' or data[i] == '*' or data[i] == '=':
+              result.insert('end', '不能含有￥&*=的特殊符号\n')
+              result.see(tk.END)
+              result.config(state='disabled')
+              return
+
+          i = i + 1
+      result.insert('end', usernicheng + '(我)p2p   ' + datatime + '\n' + data + '\n')
+      filelistnonum = filelistnonum + 1
+      result.config(state='disabled')
+      data1 = '0029' + str(data)
+      data1 = p2pencryptplus(data1,p2pkey)
+      print(data1)
+      print(p2padr)
+
+      try:
+          udpc.sendto(data1,p2padr)
+      except:
+          result.config(state='normal')
+          result.insert('end', 'p2p连接失败,已恢复服务器中转\n')
+          p2psituation = 0
+      else:
+              setput.delete('1.0', 'end')
+              setput.focus_force()
+              win32api.keybd_event(38, 0, 0, 0)
+              win32api.keybd_event(38, 0, win32con.KEYEVENTF_KEYUP, 0)
+              result.see(tk.END)
+              result.config(state='disabled')
+
+  return
 
 
 def mousemove(event):
@@ -570,14 +613,20 @@ def friendlistclick():
 
     global friendlistclick_on
     print('1')
-    result.config(state='disable')
+    result.config(state='disabled')
     friendlistclick_on = 0
+    p2psituationcontrol(0)
     global usernicheng
     global friendnicheng
-    global nowfriendrow
+    global nowfriendrow,sendenter,p2penter
 
     result.place(x=350, y=45)
-    setput.place(x=350, y=450)
+    setput.place(x=350, y=440)
+
+    sendenter.place(x=718, y=497)
+
+    p2penter.place(x=490, y=497)
+    p2plabel.place(x=350, y=497)
     for col in ws.iter_cols(min_row=2, min_col=1, max_col=1,max_row=999):
      for cell in col:
         if cell.value==nowfriendid:
@@ -602,7 +651,7 @@ def fileopen(filename):
             result.config(state='normal')
             result.delete(str(filelistline[m]) + '.0', str(filelistline[m]) + '.end')
             result.insert(str(filelistline[m]) + '.0', m + "文件不存在(点击重新下载)")
-            result.config(state='disable')
+            result.config(state='disabled')
             downloadaddfiletag(m, filelistline[m])
             for row in ws.iter_rows(min_row=nowfriendrow, min_col=filelistno[m], max_row=nowfriendrow,
                                     max_col=filelistno[m]):  # 括号代表遍历第一行到第二行,第二列到第三列
@@ -652,7 +701,7 @@ def filedelete(filename):
     result.delete(str(filelistline[filename]) + '.0', str(filelistline[filename]) + '.end')
     result.insert(str(filelistline[filename]) + '.0', filename + "(未下载)  点击下载")
     downloadaddfiletag(filename, filelistline[filename])
-    result.config(state='disable')
+    result.config(state='disabled')
     friendlistclick_on=1
     for row in ws.iter_rows(min_row=nowfriendrow, min_col=filelistno[filename], max_row=nowfriendrow,
                             max_col=filelistno[filename]):  # 括号代表遍历第一行到第二行,第二列到第三列
@@ -679,7 +728,7 @@ def downloadaddfiletag(filename,resultlinenum):       #未下载文件的标签�
     result.tag_bind(filename, "<Leave>",
                     lambda event: result.config(cursor='xterm'))  # 鼠标离开,鼠标样式变 I
     result.tag_bind(filename, "<Button-1>", lambda event: download(filename))
-    result.config(state='disable')
+    result.config(state='disabled')
     return
 def downloadedaddfiletag(filename):      #已下载文件的标签加入
     resultlinetxt = result.get(str(filelistline[filename]) + '.0', str(filelistline[filename]) + '.end')
@@ -723,7 +772,7 @@ def downloadedaddfiletag(filename):      #已下载文件的标签加入
     result.tag_bind(filename + 'delete', "<Leave>",
                     lambda event: result.config(cursor='xterm'))  # 鼠标离开,鼠标样式变 I
     result.tag_bind(filename + 'delete', "<Button-1>", lambda event: filedelete(filename))
-    result.config(state='disable')
+    result.config(state='disabled')
     return
 def download1(filename,nowfilelocation):
     global friendlistclick_on
@@ -758,7 +807,7 @@ def download2(filename,nowfilelocation):
                     result.delete(str(filelistline[filename]) + '.0', str(filelistline[filename]) + '.end')
                     result.insert(str(filelistline[filename]) + '.end', filename+"  点击重新下载")
                     downloadaddfiletag(filename, filelistline[filename])
-                    result.config(state='disable')
+                    result.config(state='disabled')
                     break
             if fileclient.filesituation==-1:
                 result.delete(str(filelistline[filename]) + '.0', str(filelistline[filename]) + '.end')
@@ -777,7 +826,7 @@ def download2(filename,nowfilelocation):
                 friendlistclick_on=1
                 fileclient.filesituation = 0
                 break
-            result.config(state='disable')
+            result.config(state='disabled')
 
 
 def download(filename):
@@ -836,7 +885,7 @@ def upload(files):
      result.insert('end', usernicheng + '(我)   ' + datatime + '\n')
      result.insert('end', usernicheng + '(我)   ' + datatime + '\n')
      result.see(tk.END)
-     result.config(state='disable')
+     result.config(state='disabled')
      t1=Thread(target=upload1, args=(filename,msg))
      t1.start()
      t2 = Thread(target=upload2, args=(filename,msg1))
@@ -898,7 +947,7 @@ def upload2(filename,nowfilelocation):
 
                 fileclient.uploadfilesituation = 0
                 break
-            result.config(state='disable')
+            result.config(state='disabled')
             result.see(tk.END)
 
 
@@ -915,7 +964,7 @@ def friendlistclick2():
     global friendnicheng
     global nowfriendrow
     global filelist
-    global filelistline
+    global filelistline,p2penter,sendenter
     global filelistnonum,friendlistclick_on,nowfriendlistclickid
     filelistline.clear()
     filelistno.clear()
@@ -1003,15 +1052,315 @@ def friendlistclick2():
     win32api.keybd_event(38, 0, win32con.KEYEVENTF_KEYUP, 0)
 
     result.see(tk.END)
-    result.config(state='disable')
+    result.config(state='disabled')
     friendlistclick_on = 1
     setput.bind('<Return>',newsend)
+    sendenter.bind('<Button-1>', newsend)
+    p2penter.bind('<Button-1>', p2penter1)
+
+
+p2psituation=0
+def udpwait1():
+    i=30
+    global p2psituation
+    while(i>0):
+        time.sleep(1)
+        i=i-1
+        p2plabel.config(text='正在请求连接'+str(i)+'s')
+        if (p2psituation==1 or p2psituation==2or p2psituation==3or p2psituation==4 ):
+            p2plabel.config(text='当前状态：P2P加密')
+            break
+        if ( p2psituation==5 or p2psituation==0 ):
+            p2psituationcontrol(0)
+    if (p2psituation==-1):
+        p2psituationcontrol(0)
+
+def p2penter1(event):
+    global udpc,p2psituation
+    if (p2psituation==0):
+        p2plabel.config(text='正在请求连接30s')
+        udpc = socket(AF_INET, SOCK_DGRAM)  # 创建套接字
+        udpc.bind(('0.0.0.0', random.randint(3456,8765)))
+        udpc.sendto(b'0015', (ip1,7583))
+        p2psituation=-1
+        t1 = threading.Thread(target=udpwait1)
+        t1.setDaemon(True)
+        t1.start()
+        t1 = threading.Thread(target=p2preceive1)
+        t1.setDaemon(True)
+        t1.start()
+def p2psituationcontrol(change):    #change为-2代表不改变，仅刷新
+    global p2psituation
+
+    if (change!=-2):
+        p2psituation=change
+    if (p2psituation==0 or p2psituation==5):
+        try:
+           udpc.close()
+        except:
+            a=1
+        p2psituation=0
+        p2plabel.config(text='当前状态：服务器中转')
+
+def p2pbegin(data):
+    global p2pkey,p2padr,p2psituation
+    p2padr1= []
+    begin = 0
+    i = 1
+    strlen = len(data)
+    leibie = 1
+    while (i < strlen):
+        if (data[i] == '&'):
+            shuju = data[begin:i ]
+            print(shuju)
+            begin = i+1
+            leibie = leibie + 1
+            if (leibie==2):
+                p2padr1.append(shuju)
+            if (leibie==3):
+                p2padr1.append(int(shuju))
+
+                data = data[begin + 2:-1]
+                begin = 0
+                newdata = b''
+                strlen = len(data)
+                i = 1
+                while (i < strlen):
+                    # print(data[i])
+                    if (data[i] == '\\'):
+                        newdata = newdata + b'\n' + bytes(data[begin + 1:i ], encoding='utf-8')
+                        begin = i + 1
+                    i = i + 1
+                newdata = b'-'+newdata[1:] + b'\n'
+                print('hewd')
+                print(newdata)
+########################################################
+                publickeyy = serialization.load_pem_public_key(newdata, backend=default_backend())
+                p2pkey['friendkey'] = publickeyy
+
+        i = i + 1
+    p2padr=(p2padr1[0],p2padr1[1])
+    p2psituation=1
+    t1 = threading.Thread(target=p2pxintiao,args=(p2padr,p2pkey))
+    t1.setDaemon(True)
+    t1.start()
+    t2 = threading.Thread(target=p2preceive, args=(p2padr, p2pkey))
+    t2.setDaemon(True)
+    t2.start()
+def p2preceive1():
+    print('1234')
+    print(p2psituation)
+    while (p2psituation == -1):
+        data1 = udpc.recv(10240)
+        print('123')
+        data1 = data1.decode(encoding='utf-8')
+        if (data1[:4] == '0016'):
+            ser0026(data1[4:])
+            break
+def p2pxintiao(p2padr,p2pkey):
+
+    global p2psituation
+    print(p2psituation)
+    while (p2psituation!=0 and p2psituation!=-1):
+     try:
+       udpc.sendto(b'0028',p2padr)
+     except:
+         p2psituationcontrol(0)
+     else:
+      print(p2psituation)
+      time.sleep(3)
+      p2psituation=p2psituation+1
+      if (p2psituation==5):
+         p2psituationcontrol(0)
+
+
+def p2preceive(p2padr,p2pkey):
+    global p2psituation
+
+    while (p2psituation!=0 and p2psituation!=-1 and p2psituation!=5):
+      try:
+           data1=udpc.recvfrom(10240)
+      except:
+            p2psituationcontrol(0)
+      else:
+        nowadr=data1[1]
+        data = data1[0]
+
+        if (nowadr[0]==p2padr[0] and nowadr[1]==p2padr[1]):
+            p2psituation=1
+           # print('yesdsa')
+            if (data!=b'0028'):
+                #print('yes')
+                data=p2pdecryptplus(data,p2pkey)
+                zhiling=data[:4]
+                data=data[4:]
+                if (zhiling=='0029'):
+                    p2pmessage(data)
 
 
 
+def p2pmessage(data):
+    dataid = nowfriendid + '  ' + str(friendnicheng) + '(对方)P2P'
+    result.config(state='normal')
+    result.insert('end', dataid + '   ' + datatime + '\n' + data + '\n')
+    result.see(tk.END)
 
 
 
+def ser0026(receivedata):
+    print('aaaa')
+    global p2pkey,p2psituation,tcpsituation1
+    i = 4
+    strlen=len(receivedata)
+    print(receivedata)
+    while (i<strlen):
+       if (receivedata[i] == '&'):
+           begin = i
+           break
+       i = i + 1
+    gip = receivedata[:i]
+    gport = int(receivedata[i + 1:])
+    print(gport)
+    p2pprivate_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048,
+        backend=default_backend()
+    )
+    p2ppublic_key = p2pprivate_key.public_key()
+    # store private key
+    p2pprivate_key1 = p2pprivate_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+    p2ppublic_key1 = p2ppublic_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    p2pprivate_key2 = serialization.load_pem_private_key(
+        p2pprivate_key1,
+        password=None,
+        backend=default_backend()
+    )
+
+    data1 = '0026' + userid + nowfriendid + gip + '&' + str(gport) + '&' + str(p2ppublic_key1)
+    print(data1)
+    data1 = encryptplus(data1)
+    print('data1'+str(data1))
+    try:
+        tcps.send(data1)
+    except:
+        print('hjfdks')
+        result.config(state='normal')
+        result.insert('end', '网络连接失败\n')
+        tcpsituation1 = 0
+        p2psituation=0
+        p2plabel.config(text='当前状态：服务器中转')
+        tcpsconnect()
+    p2pkey={}
+    print('data1')
+    p2pkey['private_key']=p2pprivate_key2
+    p2pkey['public_key'] = p2ppublic_key1
+
+
+def p2pdecryptplus(receivedata,p2pkey):
+    global tcpsituation1,p2psituation
+    print(b'abcdeabcf'+receivedata)
+
+    try:
+        original_message = b''
+        if receivedata[:3] == b'&&&':
+            i = 3
+            beginnum = 3
+            while i < len(receivedata):
+
+
+                if receivedata[i:i + 3] == b'&&&':
+                    decrypting = receivedata[beginnum:i]
+                    original_message1 = p2pkey['private_key'].decrypt(
+                        decrypting,
+                        padding.OAEP(
+                            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                            algorithm=hashes.SHA256(),
+                            label=None
+                        )
+                    )
+                    original_message = original_message + original_message1
+                    beginnum = i + 3
+                i = i + 1
+            decrypting = receivedata[beginnum:]
+            original_message1 = p2pkey['private_key'].decrypt(
+                decrypting,
+                padding.OAEP(
+                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                    algorithm=hashes.SHA256(),
+                    label=None
+                )
+            )
+            original_message = original_message + original_message1
+        else:
+            original_message = p2pkey['private_key'].decrypt(
+                receivedata,
+                padding.OAEP(
+                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                    algorithm=hashes.SHA256(),
+                    label=None
+                )
+            )
+    except:
+        p2psituation = 0
+        p2plabel.config(text='当前状态：服务器中转')
+        return ''
+
+    else:
+        print(original_message)
+        return str(original_message,encoding='utf-8')
+def p2pencryptplus(data,p2pkey):
+    global tcpsituation1,p2psituation
+    data = bytes(data, encoding='utf-8')
+    print('abccc')
+    print(p2pkey)
+
+    try:
+     encrypted = b''
+     if len(data) <= 100:
+        encrypted = p2pkey['friendkey'].encrypt(
+            data,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
+     while len(data) > 100:
+        data1 = data[:100]
+        encrypting = p2pkey['friendkey'].encrypt(
+            data1,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
+        encrypted = encrypted + b'&&&' + encrypting
+        data = data[100:]
+        if len(data) <= 100:
+            encrypting = p2pkey['friendkey'].encrypt(
+                data,
+                padding.OAEP(
+                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                    algorithm=hashes.SHA256(),
+                    label=None
+                )
+            )
+            encrypted = encrypted + b'&&&' + encrypting
+            break
+     return encrypted
+    except:
+        p2psituation = 0
+        print('defeat')
+        p2plabel.config(text='当前状态：服务器中转')
+        return ''
 
 
 def shezhi(event):
@@ -1335,6 +1684,7 @@ def dengluok():          #登录成功事件
     windowmin.place(x=725,y=2)
     windowoff.place(x=755,y=2)
     nicheng.place(x=10, y=40)
+
     tcpsituation.place(x=110, y=40)
     newchatlable=tk.Label(window,text='发起新聊天')
     newchatentry=tk.Entry(window,text='请输入对方账号',bd=0,width=23)
@@ -1367,6 +1717,7 @@ def userui(uiid):
     global offimage1
     global minimage1
     global useridlabel
+    global sendenter,p2penter
     indexbgimage = tk.PhotoImage(file="组件/ui/"+uimain+"/用户背景"+uiid+".png")
     offimage0 = tk.PhotoImage(file="组件/ui/" + uimain + "/关闭0.png")
     minimage0 = tk.PhotoImage(file="组件/ui/" + uimain + "/最小化0.png")
@@ -1382,6 +1733,9 @@ def userui(uiid):
         tcpsituation.config(fg='#8E8E84',bg='black')
         result.config(bg='#2B2B2B',fg='#FFFFFF')
         setput.config(bg='#535353',fg='#FFFFFF')
+        p2penter.config(bg='#535353', fg='#FFFFFF')
+        p2plabel.config(bg='#535353', fg='#FFFFFF')
+        sendenter .config(bg='#535353', fg='#FFFFFF')
         codeshow.config(bg='black',fg='#8E8E84')
         nicheng.config(bg='black',fg='#8E8E84')
         newchatlable.config(bg='black', fg='#8E8E84')
@@ -1407,6 +1761,9 @@ def userui(uiid):
         tcpsituation.config(fg='#8E8E84',bg='white')
         result.config(bg='#C1C1C1',fg='#747B74')
         setput.config(bg='#EBECDE',fg='#747B74')
+        sendenter.config(bg='#EBECDE', fg='#747B74')
+        p2penter.config(bg='#EBECDE', fg='#747B74')
+        p2plabel.config(bg='#EBECDE', fg='#747B74')
         codeshow.config(bg='white',fg='#8E8E84')
         nicheng.config(bg='white',fg='#8E8E84')
         newchatlable.config(bg='white', fg='#8E8E84')
@@ -1474,6 +1831,9 @@ def userexit1(event):
     friendlist8.place_forget()
     result.place_forget()
     setput.place_forget()
+    sendenter.place_forget()
+    p2penter.place_forget()
+    p2plabel.place_forget()
     userexit.place_forget()
     newchatentry.delete(0, END)
     global userid
@@ -1833,50 +2193,6 @@ def encryptplus(data):
         tcpsituation.config(text='连接服务器失败')
         tcpsituation1 = 0
         return ''
-
-
-
-#def encryptplus1(data):
- #   global tcpsituation1
- #   data = bytes(data, encoding='utf-8')
-  #  try:
- #       encrypted = server_public_key1.encrypt(
-  #          data,
-  #          padding.OAEP(
-  #              mgf=padding.MGF1(algorithm=hashes.SHA256()),
-  #              algorithm=hashes.SHA256(),
-  #              label=None
-  #          )
-   #     )
-   #     return encrypted
-   # except:
-   #     tcpsituation.config(text='连接服务器失败')
-   #     tcpsituation1 = 0
-    #    return ''
-
-#def decryptplus1(receivedata):
-   # global tcpsituation1
-   # print(b'abcdef'+receivedata)
-
-  #  try:
-  #   original_message = client_private_key2.decrypt(
-   #     receivedata,
-   #     padding.OAEP(
-    #        mgf=padding.MGF1(algorithm=hashes.SHA256()),
-    #        algorithm=hashes.SHA256(),
-    #        label=None
-   #     )
-    # )
-    # print(original_message)
-    #except:
-    #    tcpsituation.config(text='连接服务器失败')
-    #    tcpsituation1 = 0
-    #    return ''
-
-    #else:
-     #   print(original_message)
-     #   return str(original_message,encoding='utf-8')
-
 def tcpreceive():
  global datatime
  while True:
@@ -1885,7 +2201,7 @@ def tcpreceive():
     global m
     global uiid
     global usernicheng
-    global filelistnonum,logcode,logcode1
+    global filelistnonum,logcode,logcode1,gip,gport,p2pownkey
     try:
      receivedata = tcps.recv(10240)  # 等待接受(数据最大为1024)
 
@@ -1939,19 +2255,7 @@ def tcpreceive():
            global friendnicheng
            friendnicheng=receivedata[4:]
            friendlistclick2()
-     if 指令 == '0016':
-           uiid1=receivedata[4:]
-           uiid1=str(uiid1)
-           if uiid1[0]=='b':
-               uiid1=uiid1[2:]
-               uiid1 = uiid1[:-1]
-           ws['C1'].value = uiid1
-           if uiid1!=uiid:
-               wb.save(userid + ".xlsx")
-           uiid=uiid1
-           uiid = ws["C1"].value
-           print('uiid'+uiid)
-           userui(uiid1)
+
      if 指令 == '0006':
            #print("12345")
            massage(receivedata)
@@ -1964,18 +2268,14 @@ def tcpreceive():
          else:
           if receivedata[4:8]==fileclient.uploadport:
             ser0021(receivedata[8:])
-     #if 指令=='0023':
-     #    port=receivedata[4:]
 
-
-
-           #print("12345")
-
-
-     指令=''
-     global tcpsituation1
+     if (指令=='0027'):
+         p2pbegin(receivedata[4:])
 
  return
+
+
+
 def ser0021(receivedata):
            global filelistnonum
            global newuploadfileline,friendlistclick_on
@@ -2018,7 +2318,7 @@ def ser0021(receivedata):
                        cell.value = data
                        wb.save(userid + '.xlsx')
                        break
-           result.config(state='disable')
+           result.config(state='disabled')
            data1=datatime + '&' + data1
            data1 = encrypt1(data1, code)
            data1 = '0011' + nowfriendid + '&' + userid + '&' +  data1
@@ -2050,6 +2350,8 @@ def massage(receivedata):
     i = 1
     mm = 0
     sum1 = 0
+    datatime=''
+    datatimebegin=0
 
     if list[1] != '':
         while i <= len(list) - 1:
@@ -2110,7 +2412,6 @@ def massage(receivedata):
                                                 else:
                                                     dataid = dataid + '  ' + str(friendnicheng) + '(对方)'
                                                 if data[:3] == '$$$':
-
                                                     a = 2
                                                     while a <= len(data) - 1:
                                                         if data[a] == '&':
