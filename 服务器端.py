@@ -21,7 +21,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 import fileserver
 
 # logcode=b'w2V8gAUFER-9uq6lKG7AfpYI6AcINEs7Ipm4KyQj2AI='  #登录密码秘钥
-global userwithip
+
 
 wb = load_workbook("server.xlsx")
 wb.active = wb["Sheet1"]
@@ -64,6 +64,8 @@ def ser0001(data, clientinfo):  # 返回登录结果
     global userwithip
     # print(data)
     i = 0
+    user=''
+    code=''
     returndata = '0003'
     while i <= len(data) - 1:
         a = data[i]
@@ -114,6 +116,7 @@ def ser0001(data, clientinfo):  # 返回登录结果
 def ser0005(data):  # 仅用于整理新消息
     global datasum
     i = 0
+    returndata=''
     while i <= len(data) - 1:
         if data[i] != '0':
             datasum = int(data[i:])
@@ -214,6 +217,10 @@ def ser0017(data):
     userid = data[4:9]
     i = 9
     typenum = 1
+    end=0
+    usernicheng=''
+    denglucode=''
+    uiid=''
     while i <= len(data) - 1:
         if data[i] == "*":
             if typenum == 1:
@@ -254,7 +261,7 @@ def ser0019(data):
                 break
 
 
-a = 1
+
 
 
 # def ser0020():
@@ -399,7 +406,7 @@ def encryptplus1(data, client_public_key1):
         return encrypted
 
 
-global threadnum
+
 threadnum = 0
 a = ''
 
@@ -410,6 +417,8 @@ def readmsg(clientsocket, clientinfo):
     sendsum = 0
     nowuploadfilename[str(clientinfo[0]) + str(clientinfo[1])] = ''
     nowdownloadclient[str(clientinfo[0]) + str(clientinfo[1])] = ''
+    server_private_key2=''
+    client_public_key1=''
 
     # print('ok')
     print(clientinfo)

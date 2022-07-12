@@ -118,8 +118,6 @@ def tcpsitiontest():
 
 
      global tcpsituation1
-  #   print('now1'+str(tcpsituation1))
-     #print(ip)
      if tcpsituation1==0:
          tcps.close()
          tcpsconnect()
@@ -135,11 +133,9 @@ def tcpsitiontest():
             tcpsconnect()
             tcpsituation.config(text='连接服务器失败')
             tcpsituation1=0
-            #print('失败')
       else:
             tcpsituation.config(text='连接服务器成功')
             tcpsituation1 = 1
-     #print('now2' + str(tcpsituation1))
      time.sleep(3)
 
 
@@ -153,17 +149,18 @@ def decrypt1(data, cipher_key):  # 进行解密
     if data[:2]=='b\'':              #判定data是否含有b‘   ’
         data=data[2:]                #去掉data中的b‘
         data=data[:-1]               #去掉data中的’
-        print(data)
+        #print(data)
     data = bytes(data, encoding='utf-8')  #将data由string转为bytes类型
-    print(data)
-    print(cipher_key)
+    #print(data)
+    #print(cipher_key)
     decrypted_text='1234'
     try:
      decrypted_text = Fernet(cipher_key).decrypt(data)
      decrypted_text = str(decrypted_text, encoding='utf-8')
     except:
+        a=1
 
-     print(decrypted_text)
+     #print(decrypted_text)
     return decrypted_text
 
 def codeshow1():            #控制密码框显示
@@ -200,7 +197,7 @@ def newsend(event):
      data2=encrypt1(data2,code)
      data1='0011'+nowfriendid+'&'+userid+'&'+str(data2)
      data1 = encryptplus(data1)
-     print(data1)
+     #print(data1)
      try:
       tcps.send(data1)
      except:
@@ -221,7 +218,7 @@ def newsend(event):
              if cell.value==None:
                  data=datatime+'&'+userid+data
                  data=encrypt1(data,code)
-                 print('而我却'+data)
+                 #print('而我却'+data)
                  cell.value=data
                  wb.save(userid+'.xlsx')
                  break
@@ -253,8 +250,8 @@ def newsend(event):
       result.config(state='disabled')
       data1 = '0029' + str(data)
       data1 = p2pencryptplus(data1,p2pkey)
-      print(data1)
-      print(p2padr)
+      #print(data1)
+      #print(p2padr)
 
       try:
           udpc.sendto(data1,p2padr)
@@ -504,7 +501,7 @@ def friendlistsituation(friendlistnum):
     global friendlist6id
     global friendlist7id
     global friendline
-    print(len(friendline))
+    #print(len(friendline))
     if friendlistnum==1 or friendlistnum==0 and len(friendline)>=1:
         for col in ws.iter_cols(min_row=2, min_col=1, max_col=1, max_row=999):
             for cell in col:
@@ -612,7 +609,7 @@ def friendlist8click(event):
 def friendlistclick():
 
     global friendlistclick_on
-    print('1')
+    #print('1')
     result.config(state='disabled')
     friendlistclick_on = 0
     p2psituationcontrol(0)
@@ -680,10 +677,10 @@ def fileopen(filename):
 def openfile(location,f):
 
     b = os.path.join(location)
-    print("qwds11" + b)
+    #print("qwds11" + b)
     os.startfile(location)
    # os.system(f'start {os.path.realpath(location)}')
-    print("qwds" + location)
+    #print("qwds" + location)
 
 def fileopenfold(filename):
     webbrowser.open(filelocation[filename], new=2)
@@ -785,7 +782,7 @@ def download2(filename,nowfilelocation):
     timeout=0
     while True:
         try:
-            print("123:"+fileclient.filesituationtxt)
+            #print("123:"+fileclient.filesituationtxt)
             time.sleep(1)
         except:
             a=1
@@ -835,7 +832,7 @@ def download(filename):
     if filelocation[filename]=="*" :
         nowfilelocation=tkinter.filedialog.askdirectory()
         if nowfilelocation!='':
-         print(nowfilelocation)
+         #print(nowfilelocation)
          data="0020"
          tcps.send(data.encode('utf-8'))
          nowfilename=filename
@@ -858,7 +855,7 @@ def upload(files):
  if friendlistclick_on==1:
    msg = '\n'.join((item.decode('gbk') for item in files))
    msg=str(msg)
-   print('sdhajk:'+msg)
+   #print('sdhajk:'+msg)
    if os.path.isfile(msg):
     if os.path.getsize(msg)!=0:
      i=1
@@ -915,7 +912,7 @@ def upload2(filename,nowfilelocation):
         filelistline = int(result.index('end-1c').split('.')[0]) - 1
         friendlistclick_on = 0
         try:
-            print("123:"+fileclient.filesituationtxt)
+            #print("123:"+fileclient.filesituationtxt)
             time.sleep(1)
         except:
             a=1
@@ -990,7 +987,7 @@ def friendlistclick2():
                         datatime=data[:i]
 
                         data=data[i+6:]
-                        print(data)
+                        #print(data)
 
                         if dataid == userid:
                             dataid = usernicheng + '(我)'
@@ -1005,14 +1002,14 @@ def friendlistclick2():
                                     result.config(state='normal')
 
                                     filelocation[data[3:a]]=data[a+1:]  #  data[0:a]文件名  data[a+1:]文件路径     #！！！！！！！！！！！！！！1切换删除
-                                    print("uuds\n")
-                                    print(filelocation[data[3:a]])
+                                    #print("uuds\n")
+                                    #print(filelocation[data[3:a]])
                                     if data[a+1:]=="*":
                                         buttontext=data[3:a] +"(未下载)  点击下载"
                                         result.insert('end', dataid + '   ' + datatime + '\n')
                                         result.insert('end', buttontext + '\n')
                                       #  resultlinenum = resultlinenum + 2
-                                        print(result.index('end-1c').split('.')[0])
+                                        #print(result.index('end-1c').split('.')[0])
 
                                         filelistline[data[3:a]] = int(result.index('end-1c').split('.')[0])-1  # ！！！！！！！！！！！！！！1切换删除
                                         filelistno[data[3:a]] = filelistnonum  # ！！！！！！！！！！！！！！1切换删除
@@ -1067,7 +1064,8 @@ def udpwait1():
         time.sleep(1)
         i=i-1
         p2plabel.config(text='正在请求连接'+str(i)+'s')
-        if (p2psituation==1 or p2psituation==2or p2psituation==3or p2psituation==4 ):
+        if (p2psituation==1 or p2psituation==2 ):
+            result.insert('end', 'P2P加密通信连接成功，注意此模式下聊天记录不会被保存,文件传输依旧通过服务器中转，切换聊天好友将自动退出P2P模式\n')
             p2plabel.config(text='当前状态：P2P加密')
             break
         if ( p2psituation==5 or p2psituation==0 ):
@@ -1089,11 +1087,19 @@ def p2penter1(event):
         t1 = threading.Thread(target=p2preceive1)
         t1.setDaemon(True)
         t1.start()
+    if (p2psituation==1 or p2psituation==2 or p2psituation==3 or p2psituation==4):
+        p2psituationcontrol(0)
+
 def p2psituationcontrol(change):    #change为-2代表不改变，仅刷新
     global p2psituation
 
     if (change!=-2):
         p2psituation=change
+    if (p2psituation==3 or p2psituation==4):
+        p2plabel.config(text='当前状态：尝试重连中')
+    if (p2psituation==1 or p2psituation==2):
+        p2plabel.config(text='当前状态：P2P加密')
+
     if (p2psituation==0 or p2psituation==5):
         try:
            udpc.close()
@@ -1112,7 +1118,7 @@ def p2pbegin(data):
     while (i < strlen):
         if (data[i] == '&'):
             shuju = data[begin:i ]
-            print(shuju)
+            #print(shuju)
             begin = i+1
             leibie = leibie + 1
             if (leibie==2):
@@ -1132,9 +1138,6 @@ def p2pbegin(data):
                         begin = i + 1
                     i = i + 1
                 newdata = b'-'+newdata[1:] + b'\n'
-                print('hewd')
-                print(newdata)
-########################################################
                 publickeyy = serialization.load_pem_public_key(newdata, backend=default_backend())
                 p2pkey['friendkey'] = publickeyy
 
@@ -1148,11 +1151,11 @@ def p2pbegin(data):
     t2.setDaemon(True)
     t2.start()
 def p2preceive1():
-    print('1234')
-    print(p2psituation)
+    #print('1234')
+    #print(p2psituation)
     while (p2psituation == -1):
         data1 = udpc.recv(10240)
-        print('123')
+        #print('123')
         data1 = data1.decode(encoding='utf-8')
         if (data1[:4] == '0016'):
             ser0026(data1[4:])
@@ -1160,7 +1163,7 @@ def p2preceive1():
 def p2pxintiao(p2padr,p2pkey):
 
     global p2psituation
-    print(p2psituation)
+    #print(p2psituation)
     while (p2psituation!=0 and p2psituation!=-1):
      try:
        udpc.sendto(b'0028',p2padr)
@@ -1187,10 +1190,8 @@ def p2preceive(p2padr,p2pkey):
         data = data1[0]
 
         if (nowadr[0]==p2padr[0] and nowadr[1]==p2padr[1]):
-            p2psituation=1
-           # print('yesdsa')
+            p2psituationcontrol(1)
             if (data!=b'0028'):
-                #print('yes')
                 data=p2pdecryptplus(data,p2pkey)
                 zhiling=data[:4]
                 data=data[4:]
@@ -1208,11 +1209,11 @@ def p2pmessage(data):
 
 
 def ser0026(receivedata):
-    print('aaaa')
+    #print('aaaa')
     global p2pkey,p2psituation,tcpsituation1
     i = 4
     strlen=len(receivedata)
-    print(receivedata)
+    #print(receivedata)
     while (i<strlen):
        if (receivedata[i] == '&'):
            begin = i
@@ -1220,7 +1221,7 @@ def ser0026(receivedata):
        i = i + 1
     gip = receivedata[:i]
     gport = int(receivedata[i + 1:])
-    print(gport)
+    #print(gport)
     p2pprivate_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
@@ -1244,13 +1245,13 @@ def ser0026(receivedata):
     )
 
     data1 = '0026' + userid + nowfriendid + gip + '&' + str(gport) + '&' + str(p2ppublic_key1)
-    print(data1)
+    #print(data1)
     data1 = encryptplus(data1)
-    print('data1'+str(data1))
+    #print('data1'+str(data1))
     try:
         tcps.send(data1)
     except:
-        print('hjfdks')
+        #print('hjfdks')
         result.config(state='normal')
         result.insert('end', '网络连接失败\n')
         tcpsituation1 = 0
@@ -1258,14 +1259,14 @@ def ser0026(receivedata):
         p2plabel.config(text='当前状态：服务器中转')
         tcpsconnect()
     p2pkey={}
-    print('data1')
+    #print('data1')
     p2pkey['private_key']=p2pprivate_key2
     p2pkey['public_key'] = p2ppublic_key1
 
 
 def p2pdecryptplus(receivedata,p2pkey):
     global tcpsituation1,p2psituation
-    print(b'abcdeabcf'+receivedata)
+    #print(b'abcdeabcf'+receivedata)
 
     try:
         original_message = b''
@@ -1313,13 +1314,13 @@ def p2pdecryptplus(receivedata,p2pkey):
         return ''
 
     else:
-        print(original_message)
+        #print(original_message)
         return str(original_message,encoding='utf-8')
 def p2pencryptplus(data,p2pkey):
     global tcpsituation1,p2psituation
     data = bytes(data, encoding='utf-8')
-    print('abccc')
-    print(p2pkey)
+    #print('abccc')
+    #print(p2pkey)
 
     try:
      encrypted = b''
@@ -1596,13 +1597,13 @@ def baocun1():  ###s
                 slabel8.place(x=100, y=180)
                 return
             i=i+1
-        print(newcode)
+        #print(newcode)
         newcode =hashlib.md5(newcode.encode('utf8')).hexdigest()
         data = data + newcode+'&'
-        print(newcode)
+        #print(newcode)
         logcode=newcode
     else:data=data+"&"
-    print(data)
+    #print(data)
     data=encryptplus(data)
     tcps.send(data)
     shezhi_on = 1
@@ -1671,7 +1672,7 @@ def dengluok():          #登录成功事件
     uiid = str(uiid)
     ws['C1'].value = uiid
     wb.save(userid + ".xlsx")
-    print('uiid' + uiid)
+    #print('uiid' + uiid)
 
 
 
@@ -1707,7 +1708,7 @@ def dengluok():          #登录成功事件
     friendlistsituation(0)
 
 def userui(uiid):
-    print('uiid为'+uiid)
+    #print('uiid为'+uiid)
     if int(uiid)<=2:
         uimain='1'
     else:uimain='2'
@@ -2077,7 +2078,7 @@ def tcp(senddata):  #数据发送与监听事件
 
     #print(tcpsituation1)
 
-    print(senddata)
+    #print(senddata)
     senddata=encryptplus(senddata)
 
     try:
@@ -2092,8 +2093,8 @@ def ser0024(receivedata):
     global server_public_key,server_public_key1,server_public_key2,tcpsituation1,friendlistclick_on
     server_public_key = receivedata[4:]
     server_public_key1 = serialization.load_pem_public_key(server_public_key, backend=default_backend())
-    print(server_public_key1)
-    print(server_public_key)
+    #print(server_public_key1)
+    #print(server_public_key)
     tcpsituation.config(text='连接服务器成功')
     tcpsituation1 = 1
     friendlistclick_on=1
@@ -2101,7 +2102,7 @@ def ser0024(receivedata):
         tcp('0025'+userid+'&'+logcode)
 def decryptplus(receivedata):
     global tcpsituation1
-    print(b'abcdef'+receivedata)
+    #print(b'abcdef'+receivedata)
 
     try:
         original_message = b''
@@ -2149,7 +2150,7 @@ def decryptplus(receivedata):
         return ''
 
     else:
-        print(original_message)
+        #print(original_message)
         return str(original_message,encoding='utf-8')
 def encryptplus(data):
     global tcpsituation1
@@ -2221,13 +2222,14 @@ def tcpreceive():
          i = 30
          typenum = 1
          data=receivedata
+         massage1=''
          while i <= len(data) - 1:
              if data[i] == "*":
                  if typenum == 1:
                      code = data[4:i]
-                     print('1234'+code)
+                     #print('1234'+code)
                      #code=decrypt1(code,logcode)
-                     print('1234' + code)
+                     #print('1234' + code)
                  if typenum == 2:
                      usernicheng = data[end + 1:i]
                  if typenum == 3:
@@ -2312,9 +2314,9 @@ def ser0021(receivedata):
                for cell in row:
                    if cell.value == None:
                        data = datatime + '&' + userid + data
-                       print('而' + data)
+                       #print('而' + data)
                        data = encrypt1(data, code)
-                       print('而我却' + data)
+                       #print('而我却' + data)
                        cell.value = data
                        wb.save(userid + '.xlsx')
                        break
@@ -2358,7 +2360,7 @@ def massage(receivedata):
 
             data = decrypt1(list[i], code)
 
-            print("12345a"+data)
+            #print("12345a"+data)
             friendid = data[0:5]
 
             while mm < len(data):
@@ -2384,7 +2386,7 @@ def massage(receivedata):
                     # print(cell.value)
                     if cell.value == friendid:
 
-                        print('检索到用户')
+                        #print('检索到用户')
                         for row in ws.iter_rows(min_row=cellrow, min_col=11, max_row=cellrow,
                                                 max_col=999):  # 括号代表遍历第一行到第二行,第二列到第三列
                             for cell in row:
@@ -2404,7 +2406,7 @@ def massage(receivedata):
                                                 dataid = data[i + 1:i + 6]
                                                 datatime = data[:i]
                                                 data = data[i + 6:]
-                                                print(data)
+                                                #print(data)
 
                                                 if dataid == userid:
                                                     dataid = usernicheng + '(我)'
@@ -2419,14 +2421,14 @@ def massage(receivedata):
 
                                                             filelocation[data[3:a]] = data[
                                                                                       a + 1:]  # data[0:a]文件名  data[a+1:]文件路径     #！！！！！！！！！！！！！！1切换删除
-                                                            print("uuds\n")
-                                                            print(filelocation[data[3:a]])
+                                                            #print("uuds\n")
+                                                            #print(filelocation[data[3:a]])
                                                             if data[a + 1:] == "*":
                                                                 buttontext = data[3:a] + "(未下载)  点击下载"
                                                                 result.insert('end', dataid + '   ' + datatime + '\n')
                                                                 result.insert('end', buttontext + '\n')
                                                                 #  resultlinenum = resultlinenum + 2
-                                                                print(result.index('end-1c').split('.')[0])
+                                                                #print(result.index('end-1c').split('.')[0])
 
                                                                 filelistline[data[3:a]] = int(
                                                                     result.index('end-1c').split('.')[
@@ -2457,8 +2459,8 @@ def massage(receivedata):
                                         result.see(tk.END)
                                #     if nowfriendid != '':
                               #          friendlistclick()
-                                    print(time.time() - m)
-                                    print(m)
+                                    #print(time.time() - m)
+                                    #print(m)
 
                                     i = i + 1
                                     m = m + 0.001
@@ -2467,7 +2469,7 @@ def massage(receivedata):
                             break
                         break
                     elif cell.value == None:
-                        print('未检索到用户')
+                        #print('未检索到用户')
                         cell.value = friendid
                         ws["K" + str(cell.row)].value = data
                         ws["C" + str(cell.row)].value = time.time()
@@ -2486,7 +2488,7 @@ def massage(receivedata):
         wb.save(userid + ".xlsx")
         m = 0.001
 
-    print("nh" + str(len(list)))
+    #print("nh" + str(len(list)))
 
 
 
@@ -2540,11 +2542,11 @@ def codeinputadd(event):
 def windowoff1(event):  ###
   #  print('1')
     sys.exit(1)
-    window.destroy()
+    #window.destroy()
 
 
 def windowmin1(event):    ###
-    print('2')
+    #print('2')
     window.overrideredirect(False)
     window.iconify()
 #def windowshow(event):
