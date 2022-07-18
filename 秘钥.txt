@@ -7,6 +7,7 @@ pyinstaller -F  服务器端.py -p C:\Users\Pansis\PycharmProjects\pansischat\ve
 
 
 
+
 当前问题
 最小化按钮
 一次接收多条消息连接崩溃（解决方法：1.消息传输放弃对称加密2.消息分割发送）
@@ -61,6 +62,11 @@ pyinstaller -F  服务器端.py -p C:\Users\Pansis\PycharmProjects\pansischat\ve
 0028 客1-客2{互发}  p2p心跳包udp
 0029 客1-客2{互发}  p2p消息（不保存，关闭窗口即销毁）udp   0029+消息
 0030 客1-客2{互发}  关闭p2pudp
+
+
+0031 服→客 回执新版本链接
+
+
 
 消息到达回执未做
 

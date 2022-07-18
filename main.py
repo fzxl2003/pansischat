@@ -19,11 +19,14 @@ import win32api
 import win32con
 from windnd import windnd
 import fileclient
+import update
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 tcps=socket(AF_INET,SOCK_STREAM)   #创建套接字
+version=2000
+
 iptxt=open('组件/ip.txt', mode='r')
 ip1=iptxt.read()
 iptxt.close()
@@ -113,10 +116,8 @@ def tcpsconnect():
 tcpsconnect()
 
 def tcpsitiontest():
-    while True:
-
-
-
+ while True:
+  if (update.nowsituation == 0):
      global tcpsituation1
      if tcpsituation1==0:
          tcps.close()
@@ -127,7 +128,7 @@ def tcpsitiontest():
 
 
       try:
-            tcps.send('0000'.encode('utf-8'))
+            tcps.send(('0000'+str(version)).encode('utf-8'))
       except:
             tcps.close()
             tcpsconnect()
@@ -137,6 +138,8 @@ def tcpsitiontest():
             tcpsituation.config(text='连接服务器成功')
             tcpsituation1 = 1
      time.sleep(3)
+  else:
+      break
 
 
 def encrypt1(data,cipher_key):     # 进行加密
@@ -675,6 +678,7 @@ def fileopen(filename):
         t3.start()
     return
 def openfile(location,f):
+
 
     b = os.path.join(location)
     #print("qwds11" + b)
@@ -2197,12 +2201,13 @@ def encryptplus(data):
 def tcpreceive():
  global datatime
  while True:
-    global code
-    global userid
-    global m
-    global uiid
-    global usernicheng
-    global filelistnonum,logcode,logcode1,gip,gport,p2pownkey
+  global code
+  global userid
+  global m
+  global uiid
+  global usernicheng
+  global filelistnonum,logcode,logcode1,gip,gport,p2pownkey
+  if (update.nowsituation==0):
     try:
      receivedata = tcps.recv(10240)  # 等待接受(数据最大为1024)
 
@@ -2273,8 +2278,37 @@ def tcpreceive():
 
      if (指令=='0027'):
          p2pbegin(receivedata[4:])
-
+     if (指令=='0031'):
+         #print('743289' + receivedata[4:])
+         if updatesituation != 1:
+            update1(receivedata[4:])
+  else:
+      break
  return
+updatesituation=0
+def update1(url):
+  global updatesituation
+  if updatesituation!=1:
+    updatesituation = 1
+
+    print(url)
+    print(sys.path[0]+'\\组件\\update.exe')
+    f = open('组件/url.txt', 'w')
+    f.write(url)
+    f.close()
+    a=0
+    window.withdraw()
+    update.main()
+    appexit1 = threading.Thread(target=appexit)
+    appexit1.setDaemon(True)
+    appexit1.start()
+
+def appexit():     #用于强制退出主程序的函数调用，务必用多线程
+    while (update.nowsituation!=2):
+        time.sleep(1)
+    window.destroy()
+
+
 
 
 

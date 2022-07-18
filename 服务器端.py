@@ -485,6 +485,18 @@ def readmsg(clientsocket, clientinfo):
             指令 = receivedata[0:4]
             ip = clientinfo
             # print(ip)
+            if 指令=='0000':
+                clientversion=int(receivedata[4:])
+                if (clientversion<serverversion):
+                    a='0031'+newversionurl
+                    print(a)
+                    a = encryptplus(a, client_public_key1)
+                    clientsocket.send(a)
+
+
+
+
+
             if 指令 == '0001':
                 a = ser0001(receivedata[4:], clientinfo)
                 print('78392' + a)
@@ -677,11 +689,20 @@ def main():
     global udps
     global userwithip
     global threadnum
-    global nowuploadfilename, nowdownloadclient
+    global nowuploadfilename, nowdownloadclient,serverversion,newversionurl
     nowuploadfilename = {}
     nowdownloadclient = {}
     udps = socket(AF_INET, SOCK_STREAM)  # 创建套接字
     udps.bind(('', 8080))  # 本机软件绑定端口
+    verisontxt = open('information/version.txt', mode='r')
+    serverversion = int (verisontxt.read())
+    verisontxt.close()
+    print(verisontxt)
+    verisontxt = open('information/newversionurl.txt', mode='r')
+    newversionurl = verisontxt.read()
+    print(newversionurl)
+    verisontxt.close()
+    #print(verisontxt)
     t1 = Thread(target=fileserver.start, args=(12345, a))
     t1.start()
     udpt = Thread(target=udpserver)
